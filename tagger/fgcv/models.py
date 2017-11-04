@@ -83,6 +83,6 @@ class ExifTag(models.Model):
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='exif_tags')
     label = models.CharField(max_length=300, blank=True)
     raw = models.CharField(max_length=300, blank=True)
-    clean = models.CharField(max_length=300)
+    pretty = models.CharField(max_length=300, blank=True)
     tag = models.CharField(max_length=300, blank=True)
     tagspace = models.CharField(max_length=300, blank=True)

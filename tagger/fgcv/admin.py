@@ -23,6 +23,8 @@ class PhotoAdmin(admin.ModelAdmin):
         'user',
         'title',
         'flickr_id',
+        'processed',
+        'exif_imported',
         'flickr_tags',
         'secret',
         'machine_tags',
@@ -90,7 +92,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class ExifTagAdmin(admin.ModelAdmin):
-    list_display = ['label', 'tag', 'raw', 'clean']
+    list_display = ['label', 'tag', 'raw', 'pretty']
     list_filter = ['label', 'photo__user']
 
 

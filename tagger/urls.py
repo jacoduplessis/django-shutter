@@ -24,6 +24,7 @@ urlpatterns = [
     path('hoofkantoor/import/', views.ImportUserPhotosView.as_view(), name='import_user_photos'),
     path('start/', views.StartView.as_view(), name='start'),
     path('results/', views.ResultsView.as_view(), name='results'),
+    path('map/', views.MapView.as_view(), name='map'),
     path('', views.IndexView.as_view(), name='index')
 
 ]

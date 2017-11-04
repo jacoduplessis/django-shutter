@@ -35,7 +35,7 @@ class Command(BaseCommand):
                             ExifTag(
                                 photo=photo,
                                 label=tag.get('label', ''),
-                                clean=tag.get('clean', {}).get('_content', ''),
+                                pretty=tag.get('clean', {}).get('_content', ''),
                                 raw=tag.get('raw', {}).get('_content', ''),
                                 tag=tag.get('tag', ''),
                                 tagspace=tag.get('tagspace', '')
