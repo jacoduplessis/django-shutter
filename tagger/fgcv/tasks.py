@@ -15,7 +15,7 @@ def import_user_photos(user):
             'content_type': 1,  # photos only
             'extras': 'date_taken,tags,machine_tags,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o'
         }
-        response = flickr_api.get('flickr.people.getPhotos', params=params)
+        response = flickr_api.get('flickr.people.getPhotos', params=params).json()
         data = response['photos']
         photos = data['photo']
         pages = data['pages']
