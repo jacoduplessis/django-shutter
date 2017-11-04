@@ -23,8 +23,6 @@ class Command(BaseCommand):
         if limit:
             photos = photos[:limit]
 
-        print(photos)
-
         def callback_factory(photo):
             def wrapper(session, response):
                 if response.status_code == requests.codes.ok:
@@ -48,7 +46,6 @@ class Command(BaseCommand):
                     photo.camera = camera
                     photo.exif_imported = True
                     photo.save()
-                    print("saved")
 
             return wrapper
 
@@ -66,4 +63,4 @@ class Command(BaseCommand):
                 )
                 futures.append(future)
 
-        self.stdout.write(self.style.SUCCESS("Number of tags: {}".format(len(photos))))
+        self.stdout.write(self.style.SUCCESS("Number of photos: {}".format(len(photos))))
