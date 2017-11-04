@@ -1,19 +1,22 @@
 from django.core.management.base import BaseCommand
 from requests_futures.sessions import FuturesSession
-from tagger.fgcv.flickr import get_flickr_api, get_user_oauth, get_flickr_app
+from tagger.fgcv.flickr import get_user_oauth, get_flickr_app
 from django.contrib.auth.models import User
 import requests
 
 
 class Command(BaseCommand):
-    help = 'Import countries from the django_countries app.'
+    help = 'Write tags back to flickr.'
+
+    def add_arguments(self, parser):
+        parser.add_argument('user_id', type=int)
 
     def handle(self, *args, **options):
 
         url = 'https://api.flickr.com/services/rest/'
         app = get_flickr_app()
-        user = User.objects.get(id=2)
-        # session = get_flickr_api(user)
+        user_id = options.get('user_id')
+        user = User.objects.get(id=user_id)
         oauth = get_user_oauth(app=app, user=user)
         session = requests.Session()
         tags = user.tags.filter(synced=False).select_related('photo')

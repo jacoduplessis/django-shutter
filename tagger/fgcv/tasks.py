@@ -15,7 +15,7 @@ def import_user_photos(user):
             'content_type': 1,  # photos only
             'extras': 'date_taken,tags,machine_tags,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o'
         }
-        response = flickr_api.get_method('flickr.people.getPhotos', params=params)
+        response = flickr_api.get('flickr.people.getPhotos', params=params)
         data = response['photos']
         photos = data['photo']
         pages = data['pages']
@@ -72,6 +72,6 @@ def sync_tag_queryset(queryset, flickr_api):
             'photo_id': tag.photo.flickr_id,
             'tags': tag.description,
         }
-        flickr_api.post_method('flickr.photos.addTags', params=params)
+        flickr_api.post('flickr.photos.addTags', params=params)
         tag.synced = True
         tag.save()
