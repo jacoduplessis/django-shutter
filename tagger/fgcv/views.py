@@ -32,6 +32,7 @@ class ResultsView(LoginRequiredMixin, generic.TemplateView):
             user = User.objects.get(id=custom_user_id)
         else:
             user = self.request.user
+        context['user'] = user
         context['photos'] = Photo.objects.filter(user=user, processed=True).prefetch_related('tags')
         context['tags'] = (
             Tag.objects.filter(user=user)

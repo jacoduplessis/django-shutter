@@ -45,6 +45,7 @@ class PhotoAdmin(admin.ModelAdmin):
     list_filter = ['user', 'processed']
     ordering = ['-date_taken', '-time_taken']
     actions = ['tag_photos']
+    search_fields = ['title']
 
     def thumbnail(self, obj):
         return mark_safe('<img src="{}">'.format(obj.url_s))
@@ -74,6 +75,7 @@ class TagAdmin(admin.ModelAdmin):
     list_select_related = ['user']
     actions = ['sync_tags', 'mark_synced']
     list_filter = ['synced', 'user']
+    search_fields = ['description', 'mid']
 
     def sync_tags(self, request, queryset):
         for tag in queryset.filter(synced=False):
