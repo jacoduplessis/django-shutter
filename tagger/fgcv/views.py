@@ -9,6 +9,8 @@ from .models import Photo, Tag, ExifTag
 from django.db.models.aggregates import Count
 from .utils import gps_conversion
 import json
+from django.db.models.query import Prefetch
+
 
 class IndexView(generic.TemplateView):
     template_name = 'index.html'
@@ -37,9 +39,9 @@ class ResultsView(LoginRequiredMixin, generic.TemplateView):
         context['photos'] = Photo.objects.filter(user=user, processed=True).prefetch_related('tags')
         context['tags'] = (
             Tag.objects.filter(user=user)
-            .values('description')
-            .annotate(count=Count('description'))
-            .order_by('-count')
+                .values('description')
+                .annotate(count=Count('description'))
+                .order_by('-count')
         )
         return context
 
@@ -81,7 +83,6 @@ class ImportUserPhotosView(StaffMixin, generic.View):
 
 
 class MapView(LoginRequiredMixin, generic.TemplateView):
-
     template_name = 'map.html'
 
     def get_context_data(self, **kwargs):
@@ -92,20 +93,29 @@ class MapView(LoginRequiredMixin, generic.TemplateView):
         else:
             user = self.request.user
         context['user'] = user
-        photos = Photo.objects.filter(user=user)
+
+        exif_prefetch = Prefetch(
+            'exif_tags',
+            queryset=(
+                ExifTag.objects.filter(
+                    tag__in=['GPSLatitude', 'GPSLongitude'],
+                    pretty__contains='deg'
+                )
+            ),
+            to_attr='exif')
+
+        photos = Photo.objects.filter(user=user).prefetch_related(exif_prefetch)
         pins = []
         for photo in photos:
-            tag_lat = ExifTag.objects.filter(
-                photo_id=photo.id,
-                tag='GPSLatitude'
-            ).first()
-            lat = None if tag_lat is None else tag_lat.pretty
-            tag_lng = ExifTag.objects.filter(
-                photo_id=photo.id,
-                tag='GPSLongitude'
-            ).first()
-            lng = None if tag_lng is None else tag_lng.pretty
-
+            if not photo.exif:
+                continue
+            lat = None
+            lng = None
+            for exif_tag in photo.exif:
+                if exif_tag.tag == 'GPSLatitude':
+                    lat = exif_tag.pretty
+                elif exif_tag.tag == 'GPSLongitude':
+                    lng = exif_tag.pretty
             if lng and lat:
                 pins.append({
                     'lat': gps_conversion(lat),
