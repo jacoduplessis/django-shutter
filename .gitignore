@@ -1,0 +1,11 @@
+node_modules
+.idea
+.env
+venv
+__pycache__
+*.png
+*.log
+*.sqlite3
+celerybeat-schedule*
+.cache
+*.db

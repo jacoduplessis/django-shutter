@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<p>Import User Photos</p>
+<form method="post" action="{% url 'import_user_photos' %}">
+  {% csrf_token %}
+  <input name="user_id" placeholder="user_id">
+  <input type="submit">
+</form>
+
+  <ul>
+  {% for tag in tags %}
+    <li>[{{ tag.count }}] - {{ tag.description }}</li>
+  {% endfor %}
+  </ul>
+{% endblock content %}
