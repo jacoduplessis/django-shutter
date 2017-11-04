@@ -11,25 +11,18 @@ class API(requests.Session):
         self.auth = auth
         self.url_base = 'https://api.flickr.com/services/rest/'
 
-    def request(self, method, **kwargs):
+    def request(self, method, url, **kwargs):
         params = {
             'api_key': self.api_key,
             'format': 'json',
             'nojsoncallback': 1,
+            'method': url
         }
 
         kwargs['params'] = {**params, **kwargs.pop('params', {})}
         kwargs['auth'] = self.auth
 
         return super().request(method, self.url_base, **kwargs)
-
-    def get(self, method, **kwargs):
-        kwargs['params'] = {'method': method, **kwargs.pop('params', {})}
-        return self.request('GET', **kwargs)
-
-    def post(self, method, data=None, json=None, **kwargs):
-        kwargs['params'] = {'method': method, **kwargs.pop('params', {})}
-        return self.request('POST', data=data, json=json, **kwargs)
 
 
 def get_user_oauth(app=None, user=None):
@@ -50,7 +43,7 @@ def get_flickr_app():
     return SocialApp.objects.filter(provider='flickr').first()
 
 
-def get_flickr_api(user):
+def get_flickr_api_user_session(user):
     app = get_flickr_app()
     oauth = get_user_oauth(app, user)
     return API(

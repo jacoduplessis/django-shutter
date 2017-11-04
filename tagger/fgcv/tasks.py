@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from .flickr import get_flickr_api
+from .flickr import get_flickr_api_user_session
 from .models import Photo, Tag
 
 
 def import_user_photos(user):
-    flickr_api = get_flickr_api(user)
+    flickr_api = get_flickr_api_user_session(user)
 
     def get_and_create(page=1):
         params = {
@@ -61,7 +61,7 @@ def import_user_photos(user):
 
 
 def sync_user_tags(user):
-    flickr_api = get_flickr_api(user)
+    flickr_api = get_flickr_api_user_session(user)
     qs = Tag.objects.filter(user=user, synced=False).select_related('photo')
     sync_tag_queryset(qs, flickr_api)
 

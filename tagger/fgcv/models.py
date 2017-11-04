@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .flickr import get_flickr_api
+from .flickr import get_flickr_api_user_session
 
 # Create your models here.
 
@@ -15,7 +15,9 @@ class Photo(models.Model):
     date_taken = models.DateField(blank=True, null=True)
     time_taken = models.TimeField(blank=True, null=True)
     processed = models.BooleanField(default=False)
+    exif_imported = models.BooleanField(default=False)
     machine_tags = models.CharField(max_length=300, blank=True)
+    camera = models.CharField(max_length=200, blank=True)
 
     url_sq = models.URLField(blank=True)
     url_t = models.URLField(blank=True)
@@ -34,7 +36,7 @@ class Photo(models.Model):
 
     def get_api_data(self, method, api=None, **kwargs):
         if api is None:
-            api = get_flickr_api(self.user)
+            api = get_flickr_api_user_session(self.user)
 
         r = api.get(method, **kwargs)
         r.raise_for_status()
@@ -66,7 +68,7 @@ class Tag(models.Model):
 
     def sync(self, api=None):
         if api is None:
-            api = get_flickr_api(self.user)
+            api = get_flickr_api_user_session(self.user)
 
         params = {
             'photo_id': self.photo.flickr_id,
@@ -75,3 +77,12 @@ class Tag(models.Model):
         api.post('flickr.photos.addTags', params=params)
         self.synced = True
         self.save()
+
+
+class ExifTag(models.Model):
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='exif_tags')
+    label = models.CharField(max_length=300, blank=True)
+    raw = models.CharField(max_length=300, blank=True)
+    clean = models.CharField(max_length=300)
+    tag = models.CharField(max_length=300, blank=True)
+    tagspace = models.CharField(max_length=300, blank=True)

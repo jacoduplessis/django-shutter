@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from requests_futures.sessions import FuturesSession
-from tagger.fgcv.flickr import get_user_oauth, get_flickr_app
+from tagger.fgcv.flickr import get_flickr_api_user_session
 from django.contrib.auth.models import User
 import requests
 
@@ -13,12 +13,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        url = 'https://api.flickr.com/services/rest/'
-        app = get_flickr_app()
         user_id = options.get('user_id')
         user = User.objects.get(id=user_id)
-        oauth = get_user_oauth(app=app, user=user)
-        session = requests.Session()
+        session = get_flickr_api_user_session(user)
         tags = user.tags.filter(synced=False).select_related('photo')
 
         def callback_factory(tag):
@@ -29,22 +26,17 @@ class Command(BaseCommand):
 
             return wrapper
 
-        with FuturesSession(session=session, max_workers=10) as api:
+        with FuturesSession(session=session, max_workers=50) as api:
             futures = []
 
             for tag in tags:
                 params = {
                     'photo_id': tag.photo.flickr_id,
                     'tags': tag.description,
-                    'method': 'flickr.photos.addTags',
-                    'api_key': app.client_id,
-                    'format': 'json',
-                    'nojsoncallback': 1,
                 }
                 future = api.post(
-                    url,
+                    'flickr.photos.addTags',
                     params=params,
-                    auth=oauth,
                     background_callback=callback_factory(tag)
                 )
                 futures.append(future)

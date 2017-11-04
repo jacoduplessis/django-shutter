@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Photo, Tag
+from .models import Photo, Tag, ExifTag
 from .google import tag_photo_queryset
 
 
@@ -12,10 +12,12 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = [
         'title',
         'processed',
+        'exif_imported',
         'user',
         'flickr_tags',
         'date_taken',
         'time_taken',
+        'camera',
     ]
     readonly_fields = [
         'user',
@@ -42,7 +44,7 @@ class PhotoAdmin(admin.ModelAdmin):
     ]
     list_select_related = ['user']
     date_hierarchy = 'date_taken'
-    list_filter = ['user', 'processed']
+    list_filter = ['user', 'processed', 'exif_imported']
     ordering = ['-date_taken', '-time_taken']
     actions = ['tag_photos']
     search_fields = ['title']
@@ -87,5 +89,11 @@ class TagAdmin(admin.ModelAdmin):
         self.message_user(request, "{} tags marked as synced.".format(queryset.count()))
 
 
+class ExifTagAdmin(admin.ModelAdmin):
+    list_display = ['label', 'tag', 'raw', 'clean']
+    list_filter = ['label']
+
+
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(ExifTag, ExifTagAdmin)
