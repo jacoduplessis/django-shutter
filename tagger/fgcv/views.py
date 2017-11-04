@@ -27,9 +27,14 @@ class ResultsView(LoginRequiredMixin, generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['photos'] = Photo.objects.filter(user=self.request.user, processed=True).prefetch_related('tags')
+        custom_user_id = self.request.GET.get('user_id')
+        if custom_user_id and self.request.user.is_authenticated and self.request.user.is_staff:
+            user = User.objects.get(id=custom_user_id)
+        else:
+            user = self.request.user
+        context['photos'] = Photo.objects.filter(user=user, processed=True).prefetch_related('tags')
         context['tags'] = (
-            Tag.objects.filter(user=self.request.user)
+            Tag.objects.filter(user=user)
             .values('description')
             .annotate(count=Count('description'))
             .order_by('-count')
