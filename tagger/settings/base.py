@@ -123,6 +123,7 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -140,5 +141,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+
 
 
