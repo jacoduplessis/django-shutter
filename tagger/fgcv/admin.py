@@ -44,7 +44,7 @@ class PhotoAdmin(admin.ModelAdmin):
     ]
     list_select_related = ['user']
     date_hierarchy = 'date_taken'
-    list_filter = ['user', 'processed', 'exif_imported']
+    list_filter = ['user', 'processed', 'exif_imported', 'camera']
     ordering = ['-date_taken', '-time_taken']
     actions = ['tag_photos']
     search_fields = ['title']
@@ -91,7 +91,7 @@ class TagAdmin(admin.ModelAdmin):
 
 class ExifTagAdmin(admin.ModelAdmin):
     list_display = ['label', 'tag', 'raw', 'clean']
-    list_filter = ['label']
+    list_filter = ['label', 'photo__user']
 
 
 admin.site.register(Photo, PhotoAdmin)
