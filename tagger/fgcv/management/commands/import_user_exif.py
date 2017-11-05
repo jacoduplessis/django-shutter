@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from requests_futures.sessions import FuturesSession
 from tagger.fgcv.flickr import get_flickr_api_user_session
 from django.contrib.auth.models import User
-from tagger.fgcv.models import ExifTag, Photo, Exif
+from tagger.fgcv.models import Photo, Exif
 import requests
 
 
