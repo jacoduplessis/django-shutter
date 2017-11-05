@@ -79,6 +79,14 @@ class PhotoAdmin(admin.ModelAdmin):
         tag_photo_queryset(queryset)
         self.message_user(request, "{} photos tagged.".format(queryset.count()))
 
+    def set_processed_false(self, request, queryset):
+        num = queryset.update(processed=False)
+        self.message_user(request, f"{num} photos marked as unprocessed.")
+
+    def set_exif_imported_false(self, request, queryset):
+        num = queryset.update(exif_imported=False)
+        self.message_user(request, f"{num} photos tagged.")
+
 
 class TagAdmin(admin.ModelAdmin):
     list_display = [
