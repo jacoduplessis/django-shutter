@@ -2,6 +2,7 @@
 
 {% block content %}
   <h1>{{ user }}</h1>
+
   <h3>Photos</h3>
   <div>
     {% for photo in photos %}
@@ -16,10 +17,9 @@
       </div>
     {% endfor %}
   </div>
-  <h3>Tag Count</h3>
-  <ol>
-  {% for tag in tags %}
-    <li>[{{ tag.count }}] - {{ tag.description }}</li>
-  {% endfor %}
-  </ol>
+
+  {% if is_paginated %}
+    {% include '_pagination.html' %}
+  {% endif %}
+
 {% endblock content %}

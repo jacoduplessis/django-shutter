@@ -25,6 +25,8 @@ urlpatterns = [
     path('start/', views.StartView.as_view(), name='start'),
     path('results/', views.ResultsView.as_view(), name='results'),
     path('map/', views.MapView.as_view(), name='map'),
-    path('', views.IndexView.as_view(), name='index')
+    path('tags/', views.TagsView.as_view(), name='tags'),
+    path('gear/', views.GearView.as_view(), name='gear'),
+    path('', views.IndexView.as_view(), name='index'),
 
 ]
