@@ -15,8 +15,10 @@
   </ul>
 
   <h5>Lenses</h5>
+  <ul>
   {% for lens in lenses %}
     <li>{{ lens.lens|default:"Unknown" }} [{{ lens.count }}]</li>
   {% endfor %}
+  </ul>
 
 {% endblock content %}
