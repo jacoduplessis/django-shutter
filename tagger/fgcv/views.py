@@ -1,15 +1,15 @@
-from django.views import generic
+import json
+
+from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
-from .tasks import import_user_photos
-from django.http import HttpResponseRedirect
-from django.contrib import messages
-from django.urls import reverse
-from .models import Photo, Tag, ExifTag
 from django.db.models.aggregates import Count
-from .utils import gps_conversion
-import json
-from django.db.models.query import Prefetch
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views import generic
+
+from .models import Photo, Tag
+from .tasks import import_user_photos
 
 
 class IndexView(generic.TemplateView):
@@ -94,35 +94,15 @@ class MapView(LoginRequiredMixin, generic.TemplateView):
             user = self.request.user
         context['user'] = user
 
-        exif_prefetch = Prefetch(
-            'exif_tags',
-            queryset=(
-                ExifTag.objects.filter(
-                    tag__in=['GPSLatitude', 'GPSLongitude'],
-                    pretty__contains='deg'
-                )
-            ),
-            to_attr='exif')
-
-        photos = Photo.objects.filter(user=user).prefetch_related(exif_prefetch)
+        photos = Photo.objects.filter(user=user, latitude__isnull=False, longitude__isnull=False)
         pins = []
         for photo in photos:
-            if not photo.exif:
-                continue
-            lat = None
-            lng = None
-            for exif_tag in photo.exif:
-                if exif_tag.tag == 'GPSLatitude':
-                    lat = exif_tag.pretty
-                elif exif_tag.tag == 'GPSLongitude':
-                    lng = exif_tag.pretty
-            if lng and lat:
-                pins.append({
-                    'lat': gps_conversion(lat),
-                    'lng': gps_conversion(lng),
-                    'url': photo.url_s,
-                    'title': photo.title,
-                })
+            pins.append({
+                'lat': str(photo.latitude),
+                'lng': str(photo.longitude),
+                'url': photo.url_s,
+                'title': photo.title,
+            })
 
         context['pins'] = json.dumps(pins)
         return context

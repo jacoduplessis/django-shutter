@@ -6,7 +6,3 @@ def gps_conversion(old):
     new.extend([0, 0, 0])
     return (int(new[0]) + int(new[1]) / 60.0 + float(new[2]) / 3600.0) * direction[new_dir]
 
-
-if __name__ == '__main__':
-    lat, lon = '''18 deg 27' 18.59" E#34 deg 11' 40.81" S'''.split('#')
-    print(gps_conversion(lat), gps_conversion(lon))

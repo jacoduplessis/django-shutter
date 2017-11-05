@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from .flickr import get_flickr_api_user_session
+from django.contrib.postgres.fields import JSONField
+
 
 # Create your models here.
 
@@ -17,7 +19,13 @@ class Photo(models.Model):
     processed = models.BooleanField(default=False)
     exif_imported = models.BooleanField(default=False)
     machine_tags = models.CharField(max_length=300, blank=True)
-    camera = models.CharField(max_length=200, blank=True)
+    camera = models.CharField(max_length=300, blank=True)
+    lens = models.CharField(max_length=300, blank=True)
+    aperture = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+    exposure = models.CharField(max_length=300, blank=True)
+    iso = models.IntegerField(blank=True, null=True)
+    latitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=6)
 
     url_sq = models.URLField(blank=True)
     url_t = models.URLField(blank=True)
@@ -32,7 +40,6 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.title
-
 
     def get_api_data(self, method, api=None, **kwargs):
         if api is None:
@@ -53,7 +60,6 @@ class Photo(models.Model):
         tag_photo(self.id)
 
 
-
 class Tag(models.Model):
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='tags')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tags')
@@ -64,7 +70,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.description
-
 
     def sync(self, api=None):
         if api is None:
@@ -79,10 +84,10 @@ class Tag(models.Model):
         self.save()
 
 
-class ExifTag(models.Model):
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='exif_tags')
-    label = models.CharField(max_length=300, blank=True)
-    raw = models.CharField(max_length=300, blank=True)
-    pretty = models.CharField(max_length=300, blank=True)
-    tag = models.CharField(max_length=300, blank=True)
-    tagspace = models.CharField(max_length=300, blank=True)
+class Exif(models.Model):
+    photo = models.OneToOneField(Photo, unique=True, on_delete=models.CASCADE, related_name='exif')
+    data = JSONField(blank=True, default=dict)
+
+    class Meta:
+        verbose_name = 'EXIF'
+        verbose_name_plural = 'EXIF'

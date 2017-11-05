@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Photo, Tag, ExifTag
+from .models import Photo, Tag, Exif
 from .google import tag_photo_queryset
-
+from pprint import pformat
 
 # Register your models here.
 
@@ -18,8 +18,10 @@ class PhotoAdmin(admin.ModelAdmin):
         'date_taken',
         'time_taken',
         'camera',
+        'lens',
     ]
     readonly_fields = [
+        'thumbnail',
         'user',
         'title',
         'flickr_id',
@@ -31,6 +33,13 @@ class PhotoAdmin(admin.ModelAdmin):
         'date_imported',
         'date_taken',
         'time_taken',
+        'aperture',
+        'exposure',
+        'lens',
+        'camera',
+        'iso',
+        'latitude',
+        'longitude',
         'url_sq',
         'url_t',
         'url_s',
@@ -41,12 +50,12 @@ class PhotoAdmin(admin.ModelAdmin):
         'url_c',
         'url_l',
         'url_o',
-        'thumbnail',
         'display_tags',
+        'display_exif',
     ]
     list_select_related = ['user']
     date_hierarchy = 'date_taken'
-    list_filter = ['user', 'processed', 'exif_imported', 'camera']
+    list_filter = ['user', 'processed', 'exif_imported', 'camera', 'lens', 'date_taken']
     ordering = ['-date_taken', '-time_taken']
     actions = ['tag_photos']
     search_fields = ['title']
@@ -61,6 +70,10 @@ class PhotoAdmin(admin.ModelAdmin):
             html += '<li>{} - {}</li>'.format(tag.description, tag.score)
         html += '</ul>'
         return mark_safe(html)
+
+    def display_exif(self, obj):
+        if obj.exif:
+            return pformat(obj.exif.data)
 
     def tag_photos(self, request, queryset):
         tag_photo_queryset(queryset)
@@ -91,11 +104,13 @@ class TagAdmin(admin.ModelAdmin):
         self.message_user(request, "{} tags marked as synced.".format(queryset.count()))
 
 
-class ExifTagAdmin(admin.ModelAdmin):
-    list_display = ['label', 'tag', 'raw', 'pretty']
-    list_filter = ['label', 'photo__user']
+
+class ExifAdmin(admin.ModelAdmin):
+    list_display = ['photo']
+    list_select_related = ['photo']
+    readonly_fields = ['photo', 'data']
 
 
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(ExifTag, ExifTagAdmin)
+admin.site.register(Exif, ExifAdmin)
