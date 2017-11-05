@@ -57,7 +57,7 @@ class PhotoAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_taken'
     list_filter = ['user', 'processed', 'exif_imported', 'camera', 'lens', 'date_taken']
     ordering = ['-date_taken', '-time_taken']
-    actions = ['tag_photos']
+    actions = ['tag_photos', 'set_processed_false', 'set_exif_imported_false']
     search_fields = ['title']
 
     def thumbnail(self, obj):
