@@ -19,6 +19,7 @@ class PhotoAdmin(admin.ModelAdmin):
         'time_taken',
         'camera',
         'lens',
+
     ]
     readonly_fields = [
         'thumbnail',
@@ -55,7 +56,16 @@ class PhotoAdmin(admin.ModelAdmin):
     ]
     list_select_related = ['user']
     date_hierarchy = 'date_taken'
-    list_filter = ['user', 'processed', 'exif_imported', 'camera', 'lens', 'date_taken']
+    list_filter = [
+        'user',
+        'processed',
+        'exif_imported',
+        'camera',
+        'lens',
+        'date_taken',
+        'latitude',
+        'longitude',
+    ]
     ordering = ['-date_taken', '-time_taken']
     actions = ['tag_photos', 'set_processed_false', 'set_exif_imported_false']
     search_fields = ['title']
