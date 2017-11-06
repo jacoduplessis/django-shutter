@@ -3,6 +3,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models import Prefetch
 from django.db.models.aggregates import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -57,9 +58,15 @@ class ResultsView(LoginRequiredMixin, UserOverrideMixin, generic.ListView):
     context_object_name = 'photos'
 
     def get_queryset(self):
+
+        tags_prefetch = Prefetch(
+            'tags',
+            queryset=Tag.objects.order_by('-score')
+        )
+
         return (Photo.objects
                 .filter(user=self.user, processed=True)
-                .prefetch_related('tags')
+                .prefetch_related(tags_prefetch)
                 .order_by('-date_taken', '-time_taken')
                 )
 
