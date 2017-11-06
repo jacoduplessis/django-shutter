@@ -55,6 +55,20 @@ class Photo(models.Model):
     def get_exif(self, api=None):
         return self.get_api_data('flickr.photos.getExif', api, params=dict(photo_id=self.flickr_id))
 
+    def update_geodata(self, api=None):
+        data = self.get_api_data('flickr.photos.getInfo', api, params=dict(photo_id=self.flickr_id))
+        try:
+            lat = data['photo']['location']['latitude']
+            lng = data['photo']['location']['longitude']
+        except KeyError:
+            return False
+        if not (lat and lng):
+            return False
+        self.latitude = lat
+        self.longitude = lng
+        self.save()
+        return True
+
     def tag(self):
         from .google import tag_photo
         tag_photo(self.id)

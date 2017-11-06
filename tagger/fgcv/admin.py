@@ -5,8 +5,6 @@ from .models import Photo, Tag, Exif
 from .google import tag_photo_queryset
 from pprint import pformat
 
-# Register your models here.
-
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = [
@@ -66,8 +64,16 @@ class PhotoAdmin(admin.ModelAdmin):
         'latitude',
         'longitude',
     ]
-    ordering = ['-date_taken', '-time_taken']
-    actions = ['tag_photos', 'set_processed_false', 'set_exif_imported_false']
+    ordering = [
+        '-date_taken',
+        '-time_taken'
+    ]
+    actions = [
+        'tag_photos',
+        'set_processed_false',
+        'set_exif_imported_false',
+        'update_geodata'
+    ]
     search_fields = ['title']
 
     def thumbnail(self, obj):
@@ -97,6 +103,14 @@ class PhotoAdmin(admin.ModelAdmin):
         num = queryset.update(exif_imported=False)
         self.message_user(request, f"{num} photos tagged.")
 
+    def update_geodata(self, request, queryset):
+        num = 0
+        for photo in queryset:
+            updated = photo.update_geodata()
+            if updated:
+                num += 1
+        self.message_user(request, f"{num} geo updated")
+
 
 class TagAdmin(admin.ModelAdmin):
     list_display = [
@@ -120,7 +134,6 @@ class TagAdmin(admin.ModelAdmin):
     def mark_synced(self, request, queryset):
         queryset.update(synced=True)
         self.message_user(request, "{} tags marked as synced.".format(queryset.count()))
-
 
 
 class ExifAdmin(admin.ModelAdmin):
