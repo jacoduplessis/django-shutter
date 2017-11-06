@@ -10,14 +10,14 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('user_id', type=int)
-        parser.add_argument('--print', action='store_true')
+        parser.add_argument('--print_one', action='store_true')
 
     def handle(self, *args, **options):
 
         user_id = options.get('user_id')
         user = User.objects.get(id=user_id)
 
-        if options.get('print'):
+        if options.get('print_one'):
             flickr_api = get_flickr_api_user_session(user)
             params = {
                 'user_id': 'me',
