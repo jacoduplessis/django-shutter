@@ -126,7 +126,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-LOGIN_URL = '/account/login/flickr/'
+LOGIN_URL = '/account/flickr/login/'
 
 LOGIN_REDIRECT_URL = '/'
 
