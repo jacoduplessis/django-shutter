@@ -14,8 +14,9 @@
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // lat lng
     pins.forEach(p => {
-      L.marker([p.lng, p.lat]).addTo(map)
+      L.marker([p.lat, p.lng]).addTo(map)
       .bindPopup(`<p>${p.title}</p><img src="${p.url}"><br>`, {
         minWidth: 200,
         maxWidth: 500,
