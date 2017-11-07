@@ -161,8 +161,6 @@ def interpolate_lat_lon(points, t, max_dt=1):
             dt = (t - points[-1][0]).total_seconds()
         if dt > max_dt:
             raise ValueError("Time t not in scope of gpx file.")
-        else:
-            print("Warning: Time t not in scope of gpx file by {} seconds, extrapolating...".format(dt))
 
         if t < points[0][0]:
             before = points[0]
@@ -236,8 +234,14 @@ def get_lat_lon_time_from_gpx(gpx_file, local_time=True):
 
 
 def get_estimate(time, gpx, **kwargs):
-    lat, lng = 0, 0
-    return lat, lng
+    points = get_lat_lon_time_from_gpx(gpx)
+    print(len(points))
+    result = None
+    try:
+        result = interpolate_lat_lon(points=points, t=time, max_dt=1000000)
+    except ValueError:
+        print(time, "not found")
+    return result
 
 
 if __name__ == '__main__':
