@@ -220,9 +220,13 @@ def get_lat_lon_time_from_gpx(gpx_file):
         for track in gpx.tracks:
             for segment in track.segments:
                 for point in segment.points:
+                    if point.time is None:
+                        continue
                     points.append((point.time, point.latitude, point.longitude, point.elevation))
     if len(gpx.waypoints) > 0:
         for point in gpx.waypoints:
+            if point.time is None:
+                continue
             points.append((point.time, point.latitude, point.longitude, point.elevation))
 
     return points
