@@ -20,9 +20,9 @@
     // lat lng
     pins.forEach(p => {
       const marker = L.marker([p.lat, p.lng])
-        .bindPopup(`<p>${p.title}</p><img src="${p.url}"><br>`, {
-          minWidth: 200,
-          maxWidth: 500,
+        .bindPopup(`<h2>${p.title}</h2><img src="${p.url}"><br>`, {
+          minWidth: 500,
+          maxWidth: 800,
         })
       markers.addLayer(marker)
     })

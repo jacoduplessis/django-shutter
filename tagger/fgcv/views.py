@@ -111,7 +111,7 @@ class MapView(LoginRequiredMixin, UserOverrideMixin, generic.TemplateView):
             pins.append({
                 'lat': str(photo.latitude),
                 'lng': str(photo.longitude),
-                'url': photo.url_s,
+                'url': photo.url_m,
                 'title': photo.title,
             })
 
