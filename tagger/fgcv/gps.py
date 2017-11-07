@@ -205,7 +205,7 @@ def interpolate_lat_lon(points, t, max_dt=1):
     return lat, lon, bearing, ele
 
 
-def get_lat_lon_time_from_gpx(gpx_file, local_time=True):
+def get_lat_lon_time_from_gpx(gpx_file):
     '''
     Read location and time stamps from a track in a GPX file.
     Returns a list of tuples (time, lat, lon).
@@ -220,15 +220,10 @@ def get_lat_lon_time_from_gpx(gpx_file, local_time=True):
         for track in gpx.tracks:
             for segment in track.segments:
                 for point in segment.points:
-                    t = utc_to_localtime(point.time) if local_time else point.time
-                    points.append((t, point.latitude, point.longitude, point.elevation))
+                    points.append((point.time, point.latitude, point.longitude, point.elevation))
     if len(gpx.waypoints) > 0:
         for point in gpx.waypoints:
-            t = utc_to_localtime(point.time) if local_time else point.time
-            points.append((t, point.latitude, point.longitude, point.elevation))
-
-    # sort by time just in case
-    points.sort()
+            points.append((point.time, point.latitude, point.longitude, point.elevation))
 
     return points
 
