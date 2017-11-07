@@ -13,12 +13,14 @@ class Command(BaseCommand):
         parser.add_argument('user_id', type=int)
         parser.add_argument('gpx')
         parser.add_argument('date')
+        parser.add_argument('--offset', type=int)
         parser.add_argument('--noop', action='store_true')
 
     def handle(self, *args, **options):
 
         user_id = options.get('user_id')
         gpx_path = options.get('gpx')
+        offset = options.get('offset')
         date = options.get('date')
 
         photos = Photo.objects.filter(user_id=user_id, date_taken=date)
@@ -27,6 +29,8 @@ class Command(BaseCommand):
 
         for photo in photos:
             photo_time = datetime.datetime.combine(photo.date_taken, photo.time_taken)
+            if offset:
+                photo_time += datetime.timedelta(hours=offset)
             estimate = get_estimate(time=photo_time, gpx=gpx_path)
             if estimate is None:
                 continue
@@ -36,4 +40,5 @@ class Command(BaseCommand):
                 photo.latitude = lat
                 photo.longitude = lng
                 photo.save()
+
         self.stdout.write(self.style.SUCCESS(f"Number of photos with new geodata: {num_imported}"))
