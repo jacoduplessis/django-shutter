@@ -6,3 +6,4 @@ requests-futures==0.9.7
 requests-oauthlib==0.8.0
 psycopg2==2.7.3.2
 dj-database-url==0.4.2
+gpxpy==1.1.2
