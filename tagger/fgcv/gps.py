@@ -234,7 +234,10 @@ def get_lat_lon_time_from_gpx(gpx_file, local_time=True):
 
 
 def get_estimate(time, gpx, **kwargs):
-    points = get_lat_lon_time_from_gpx(gpx)
+    try:
+        points = get_lat_lon_time_from_gpx(gpx)
+    except TypeError:
+        return None
     result = None
     try:
         result = interpolate_lat_lon(points=points, t=time, max_dt=1000000)
