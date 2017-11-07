@@ -232,31 +232,11 @@ def get_lat_lon_time_from_gpx(gpx_file):
     return points
 
 
-def get_estimate(time, gpx, **kwargs):
-    try:
-        points = get_lat_lon_time_from_gpx(gpx)
-    except TypeError:
-        return None
+def get_estimate(time, points, **kwargs):
+
     result = None
     try:
         result = interpolate_lat_lon(points=points, t=time, max_dt=1000000)
     except ValueError:
         pass
     return result
-
-
-if __name__ == '__main__':
-    kwargs = {
-        'time_offset': 0,
-        'bearing_offset': 0.0
-    }
-
-    '''
-    times = [photo.time_taken for photo in photos]
-    '''
-    gpx_file_location = ''
-    # read gpx file to get track locations
-    gpx = get_lat_lon_time_from_gpx(gpx_file_location)
-    '''
-    estimates = [get_estimate(time, gpx, **kwargs) for photo in photos]
-    '''
