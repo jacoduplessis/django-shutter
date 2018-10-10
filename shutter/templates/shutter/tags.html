@@ -1,0 +1,11 @@
+{% extends 'shutter/base.html' %}
+
+{% block content %}
+  <h1>{{ user }}</h1>
+  <h3>Tag Count</h3>
+  <ol>
+    {% for tag in tags %}
+      <li>[{{ tag.count }}] - {{ tag.description }}</li>
+    {% endfor %}
+  </ol>
+{% endblock content %}

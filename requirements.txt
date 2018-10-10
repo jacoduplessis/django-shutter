@@ -1,9 +1,0 @@
-Django==2.0b1
-django-allauth==0.34.0
-django-dotenv==1.4.1
-requests==2.18.4
-requests-futures==0.9.7
-requests-oauthlib==0.8.0
-psycopg2==2.7.3.2
-dj-database-url==0.4.2
-gpxpy==1.1.2

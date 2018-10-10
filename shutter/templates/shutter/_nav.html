@@ -1,0 +1,19 @@
+<div class="nav">
+  <a href="{% url 'shutter:results' %}">Processed</a>
+  <a href="{% url 'shutter:tags' %}">Tags</a>
+  <a href="{% url 'shutter:map' %}">Map</a>
+  <a href="{% url 'shutter:gear' %}">Gear</a>
+  <a href="{% url 'shutter:gallery' %}">Gallery</a>
+</div>
+<style>
+  .nav {
+    background-color: whitesmoke;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .nav a {
+    font-weight: 600;
+    margin: 1rem;
+  }
+</style>

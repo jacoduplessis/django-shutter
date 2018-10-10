@@ -1,0 +1,25 @@
+{% extends 'shutter/base.html' %}
+
+{% block content %}
+  <h1>{{ user }}</h1>
+
+  <h3>Photos</h3>
+  <div>
+    {% for photo in photos %}
+      <div>
+        <img src="{{ photo.url_s }}" style="vertical-align: top">
+        <ol style="display: inline-block; margin-top: 0">
+          {% for tag in photo.tags.all %}
+            <li>{{ tag.description }} ({{ tag.score }})</li>
+          {% endfor %}
+        </ol>
+        <hr>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if is_paginated %}
+    {% include 'shutter/_pagination.html' %}
+  {% endif %}
+
+{% endblock content %}
